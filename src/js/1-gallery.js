@@ -1,7 +1,6 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-// Масив даних для галереї
 const galleryItems = [
   {
     preview: 'path/to/small-image1.jpg',
@@ -20,10 +19,8 @@ const galleryItems = [
   },
 ];
 
-// Отримання елемента ul.gallery
 const galleryContainer = document.querySelector('.gallery');
 
-// Створення розмітки для галереї
 const galleryMarkup = galleryItems
   .map(
     ({ preview, original, description }) => `
@@ -40,10 +37,8 @@ const galleryMarkup = galleryItems
   )
   .join('');
 
-// Додавання розмітки в DOM
 galleryContainer.innerHTML = galleryMarkup;
 
-// Ініціалізація SimpleLightbox
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
   captionsData: 'alt',
