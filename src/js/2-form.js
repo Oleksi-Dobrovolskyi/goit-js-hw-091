@@ -1,43 +1,58 @@
-const STORAGE_KEY = 'feedback-form-state';
-
 let formData = { email: '', message: '' };
 
 const form = document.querySelector('.feedback-form');
-const emailInput = form.elements.email;
-const messageTextarea = form.elements.message;
 
-const saveToLocalStorage = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-};
+const fillFormFields = () => {
+  try {
+    const formDataFromLS = JSON.parse(
+      localStorage.getItem('feedback-form-data')
+    );
 
-const loadFromLocalStorage = () => {
-  const savedData = localStorage.getItem(STORAGE_KEY);
-  if (savedData) {
-    formData = JSON.parse(savedData);
-    emailInput.value = formData.email;
-    messageTextarea.value = formData.message;
+    if (formDataFromLS === null) {
+      return;
+    }
+
+    formData = formDataFromLS;
+
+    for (const key in formDataFromLS) {
+      form.elements[key].value = formDataFromLS[key];
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
-form.addEventListener('input', (event) => {
-  const { name, value } = event.target;
-  formData[name] = value;
-  saveToLocalStorage();
-});
+fillFormFields();
 
-form.addEventListener('submit', (event) => {
+const onFormFieldChanhe = event => {
+  const { target: formField } = event;
+
+  const fieldValue = formField.value;
+  const fieldName = formField.name;
+
+  formData[fieldName] = fieldValue;
+
+  localStorage.setItem('feedback-form-data', JSON.stringify(formData));
+};
+
+const onFeedbackFormSubmit = event => {
   event.preventDefault();
 
-  if (!formData.email || !formData.message) {
+  const { email, message } = formData;
+
+  if (!email || !message) {
     alert('Fill please all fields');
     return;
   }
 
-  console.log('Form data:', formData);
+  console.log('Submitted data:', formData);
 
-    form.reset();
+  const { currentTarget: formEL } = event;
+
+  event.currentTarget.reset();
+  localStorage.removeItem('feedback-form-data');
   formData = { email: '', message: '' };
-  localStorage.removeItem(STORAGE_KEY);
-});
+};
 
-document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+form.addEventListener('input', onFormFieldChanhe);
+form.addEventListener('submit', onFeedbackFormSubmit);
